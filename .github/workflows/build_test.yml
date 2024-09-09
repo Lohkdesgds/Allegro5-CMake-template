@@ -1,0 +1,64 @@
+name: Build test
+# Based on Allegro's pipeline
+
+#on: [push, pull_request]
+
+jobs:
+    windows_test:
+        name: Windows (MSYS2) tests
+        runs-on: windows-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@main
+              with:
+                  fetch-depth: 1
+            - uses: msys2/setup-msys2@main
+            - name: Setup
+              shell: msys2 {0}
+              run: |
+                  pacman --noconfirm -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake make mingw-w64-x86_64-physfs mingw-w64-x86_64-freetype mingw-w64-x86_64-libvorbis mingw-w64-x86_64-flac mingw-w64-x86_64-dumb mingw-w64-x86_64-libtheora mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-opusfile mingw-w64-x86_64-enet mingw-w64-x86_64-libwebp
+                  mkdir build
+            - name: Configure
+              shell: msys2 {0}
+              run: |
+                  cd build
+                  cmake .. -G"MSYS Makefiles"
+            - name: Build
+              shell: msys2 {0}
+              run: |
+                  cd build
+                  make -j4
+                  
+            - name: Save build folder as artifact
+              uses: actions/upload-artifact@main
+              with:
+                name: build_folder_windows
+                path: ${{ runner.workspace }}/build
+    ubuntu_test:
+        name: Ubuntu tests
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@main
+              with:
+                  fetch-depth: 1
+            - name: Setup
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y xvfb libvorbis-dev libtheora-dev libwebp-dev libphysfs-dev libopusfile-dev libdumb1-dev libflac-dev libpulse-dev libgtk-3-dev pandoc libcurl4-nss-dev libenet-dev pulseaudio libasound2-dev libopenal-dev libgl1-mesa-dev libglu-dev;
+                  mkdir build
+                  cd build
+            - name: Configure
+              run: |
+                  cd build
+                  cmake .. -DCMAKE_BUILD_TYPE=Debug -DWANT_SHADERS_GL=on -DWANT_CURL_EXAMPLE=on
+            - name: Build
+              run: |
+                  cd build
+                  make -j4
+                  
+            - name: Save build folder as artifact
+              uses: actions/upload-artifact@main
+              with:
+                name: build_folder_ubuntu
+                path: ${{ runner.workspace }}/build
