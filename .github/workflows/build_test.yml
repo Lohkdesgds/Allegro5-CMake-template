@@ -15,7 +15,7 @@ jobs:
               uses: actions/checkout@main
               with:
                   fetch-depth: 1
-            - uses: msys2/setup-msys2@main
+            - uses: msys2/setup-msys2@v2
             - name: Setup
               shell: msys2 {0}
               run: |
@@ -36,7 +36,7 @@ jobs:
               uses: actions/upload-artifact@main
               with:
                 name: build_folder_windows
-                path: ${{ runner.workspace }}/build
+                path: './'
     ubuntu_test:
         name: Ubuntu tests
         runs-on: ubuntu-latest
@@ -64,4 +64,4 @@ jobs:
               uses: actions/upload-artifact@main
               with:
                 name: build_folder_ubuntu
-                path: ${{ runner.workspace }}/build
+                path: './'
