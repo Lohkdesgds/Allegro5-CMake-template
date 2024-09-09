@@ -20,17 +20,17 @@ jobs:
               shell: msys2 {0}
               run: |
                   pacman --noconfirm -S mingw-w64-x86_64-gcc mingw-w64-x86_64-cmake make mingw-w64-x86_64-physfs mingw-w64-x86_64-freetype mingw-w64-x86_64-libvorbis mingw-w64-x86_64-flac mingw-w64-x86_64-dumb mingw-w64-x86_64-libtheora mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-opusfile mingw-w64-x86_64-enet mingw-w64-x86_64-libwebp
-                  mkdir build
+                  mkdir -p build
             - name: Configure
               shell: msys2 {0}
               run: |
                   cd build
-                  cmake .. -G"MSYS Makefiles"
+                  cmake .. -DCMAKE_BUILD_TYPE=Debug 
             - name: Build
               shell: msys2 {0}
               run: |
                   cd build
-                  make -j4
+                  cmake --build . -t al_example
                   
             - name: Save build folder as artifact
               uses: actions/upload-artifact@main
@@ -54,11 +54,11 @@ jobs:
             - name: Configure
               run: |
                   cd build
-                  cmake .. -DCMAKE_BUILD_TYPE=Debug -DWANT_SHADERS_GL=on -DWANT_CURL_EXAMPLE=on
+                  cmake .. -DCMAKE_BUILD_TYPE=Debug -DWANT_SHADERS_GL=on
             - name: Build
               run: |
                   cd build
-                  make -j4
+                  cmake --build . -t al_example
                   
             - name: Save build folder as artifact
               uses: actions/upload-artifact@main
