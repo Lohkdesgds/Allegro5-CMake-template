@@ -1,7 +1,10 @@
 name: Build test
 # Based on Allegro's pipeline
 
-#on: [push, pull_request]
+on:
+  push:
+    branches:    
+      - master
 
 jobs:
     windows_test:
